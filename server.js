@@ -1,5 +1,7 @@
-const express = require('express');
+const express = require('express')
 const app = express()
+const path = require('path')
+const robbie = require('./public/robbie')
 
 const urlLogger = (request, response, next) => {
   console.log('Request URL:', request.url)
@@ -11,23 +13,21 @@ const timeLogger = (request, response, next) => {
   next()
 }
 
-
-app.get('/', (request, response) => {
-  response.send('hello world');
-});
-
 app.use(urlLogger, timeLogger)
 app.use(express.static('public'))
-// app.get('/', (request, response) => {
-//   // We don't need to explicitly use this handler or send a response
-//   // because Express is using the default path of the static assets
-//   // to serve this content
-// })
+
+app.get('/sunsets', (request, response) => {
+  response.status(200).sendFile(path.join(__dirname + '/public/sunsets.html'))
+})
 
 app.get('/json', (request, response) => {
-  response.status(200).json({"name": "Robbie"})
+  response.status(200).json(robbie)
 })
 
 app.listen(3000, () => {
   console.log('Express Intro running on localhost:3000')
+})
+
+app.use((req, res, next) => {
+  res.status(404).send("Sorry can't find that!")
 })
